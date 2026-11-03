@@ -98,8 +98,13 @@ function showSetupHint() {
 
 function registerSW() {
   if (!('serviceWorker' in navigator)) return;
-  window.addEventListener('load', async () => {
-    try { await navigator.serviceWorker.register('./sw.js'); } catch { /* http 접속 등 */ }
+  const tryReg = async () => {
+    try { return await navigator.serviceWorker.register('./sw.js'); } catch { return null; }
+  };
+  tryReg().then((reg) => {
+    if (reg) return;
+    // 첫 시도 실패(네트워크 등) → 로드 완료 후 한 번 더
+    window.addEventListener('load', () => { tryReg(); }, { once: true });
   });
 }
 
