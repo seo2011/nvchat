@@ -955,6 +955,9 @@ async function testConnection() {
     if (chat && chat.ok) {
       el.textContent = `✅ 성공 — 모델 ${models.length}개 · 채팅 확인(${shortModel(chat.model)}) ${ms}ms`;
       toast('연결 성공!', 'ok');
+    } else if (chat && chat.skipped) {
+      el.textContent = `🔑 모델 ${models.length}개 OK — ${chat.error}`;
+      toast('API 키를 입력하세요', '');
     } else if (chat && !chat.ok) {
       el.textContent = `⚠️ 모델 목록 ${models.length}개는 OK, 채팅 확인 실패: ${chat.error}`;
       toast('채팅 확인 실패 — 키/모델을 확인하세요', 'err');

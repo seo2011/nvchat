@@ -84,9 +84,24 @@ export async function listModels() {
  */
 export async function testConnection({ model } = {}) {
   const started = Date.now();
-  const models = await listModels();
   const cfg = getConfig();
+  const models = await listModels();
   const probe = model || cfg.model || models.find((m) => looksChatModel(m.id))?.id;
+
+  // 중계 서버·브라우저 어디에도 키가 없으면 채팅 검사는 건너뛰고 안내
+  if (!cfg.directMode && !cfg.apiKey) {
+    try {
+      const h = await fetch(baseUrl().url + '/health').then((r) => (r.ok ? r.json() : null));
+      if (h && h.hasKey === false) {
+        return {
+          models,
+          ms: Date.now() - started,
+          chat: { ok: false, skipped: true, model: probe, error: 'API 키가 없습니다 — 설정 → 연결의 API 키 칸에 nvapi-… 키를 입력하세요.' },
+        };
+      }
+    } catch { /* 확인 불가 시 그냥 진행 */ }
+  }
+
   let chat = null;
   if (probe) {
     try {

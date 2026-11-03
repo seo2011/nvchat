@@ -1,5 +1,5 @@
 /* NV Chat 서비스 워커 — 앱 셸 캐시(오프라인 화면 + 빠른 시작) */
-const VERSION = 'nvchat-v1.0.1';
+const VERSION = 'nvchat-v1.0.2';
 const SHELL = [
   './',
   './index.html',
